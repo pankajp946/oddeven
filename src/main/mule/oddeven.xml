@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="3426b150-9bc3-49b2-8794-e363ca3d54b9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="oddevenFlow" doc:id="88d4970f-87df-45ed-9343-354aa0882687" >
+		<http:listener doc:name="Listener" doc:id="9d2ff541-a710-4f82-bab4-4295e0884d67" config-ref="HTTP_Listener_config" path="/oe"/>
+		<set-variable value="#[attributes.queryParams.num1 as Number]" doc:name="Set Variable" doc:id="3af2a74a-68d0-43a2-854e-1cf5de40f157" variableName="num1"/>
+		<set-variable value="#[attributes.queryParams.num2 as Number]" doc:name="Set Variable" doc:id="00958cd0-acad-47c1-9f37-b1ad46ba85e2" variableName="num2"/>
+		<ee:transform doc:name="Transform Message" doc:id="7efc6212-cfcb-498a-a9c3-99594ea9ec2d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+if ((vars.num1 as Number  mod 2)==0) 
+{
+	"message": vars.num1 as Number ++  "is Even"
+}
+else
+{"message":"no is odd"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
